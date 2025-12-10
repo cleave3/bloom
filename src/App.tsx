@@ -2,11 +2,58 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { isOnboardingComplete } from "@/lib/storage";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
+import CalendarPage from "./pages/CalendarPage";
+import History from "./pages/History";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+function AppRoutes() {
+  const [loading, setLoading] = useState(true);
+  const [onboarded, setOnboarded] = useState(false);
+
+  useEffect(() => {
+    setOnboarded(isOnboardingComplete());
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse-soft text-primary text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route 
+        path="/" 
+        element={onboarded ? <Dashboard /> : <Navigate to="/onboarding" replace />} 
+      />
+      <Route path="/onboarding" element={<Onboarding />} />
+      <Route 
+        path="/calendar" 
+        element={onboarded ? <CalendarPage /> : <Navigate to="/onboarding" replace />} 
+      />
+      <Route 
+        path="/history" 
+        element={onboarded ? <History /> : <Navigate to="/onboarding" replace />} 
+      />
+      <Route 
+        path="/settings" 
+        element={onboarded ? <Settings /> : <Navigate to="/onboarding" replace />} 
+      />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -14,11 +61,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
