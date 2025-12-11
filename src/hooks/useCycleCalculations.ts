@@ -16,12 +16,43 @@ import {
 } from 'date-fns';
 
 export function useCycleCalculations(cycleData: CycleData | null) {
+  // Improved cycle length prediction using weighted average of logged cycles
+  const predictedCycleLength = useMemo(() => {
+    if (!cycleData || cycleData.periodLogs.length < 2) {
+      return cycleData?.cycleLength || 28;
+    }
+    
+    const sortedLogs = [...cycleData.periodLogs].sort(
+      (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
+    
+    const cycleLengths: number[] = [];
+    for (let i = 1; i < sortedLogs.length; i++) {
+      const diff = differenceInDays(
+        parseISO(sortedLogs[i].startDate),
+        parseISO(sortedLogs[i - 1].startDate)
+      );
+      if (diff > 0 && diff < 60) {
+        cycleLengths.push(diff);
+      }
+    }
+    
+    if (cycleLengths.length === 0) return cycleData.cycleLength;
+    
+    // Weighted average: recent cycles have more weight
+    const weights = cycleLengths.map((_, i) => Math.pow(1.5, i));
+    const weightedSum = cycleLengths.reduce((sum, len, i) => sum + len * weights[i], 0);
+    const totalWeight = weights.reduce((a, b) => a + b, 0);
+    
+    return Math.round(weightedSum / totalWeight);
+  }, [cycleData]);
+
   const insights = useMemo<CycleInsights | null>(() => {
     if (!cycleData) return null;
     
     const today = startOfDay(new Date());
     const lastPeriod = startOfDay(parseISO(cycleData.lastPeriodStart));
-    const cycleLength = cycleData.cycleLength;
+    const cycleLength = predictedCycleLength;
     
     // Calculate current day in cycle (1-indexed)
     const daysSinceLastPeriod = differenceInDays(today, lastPeriod);
@@ -161,5 +192,5 @@ export function useCycleCalculations(cycleData: CycleData | null) {
     };
   }, [cycleData]);
   
-  return { insights, getDayStatus, stats };
+  return { insights, getDayStatus, stats, predictedCycleLength };
 }

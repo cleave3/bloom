@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { 
   DayStatus, 
   Symptom, 
@@ -19,7 +20,7 @@ import {
 } from '@/types/cycle';
 import { updateDayLog } from '@/lib/storage';
 import { cn } from '@/lib/utils';
-import { Droplets, Check } from 'lucide-react';
+import { Droplets, Check, Thermometer } from 'lucide-react';
 
 interface DayDetailSheetProps {
   open: boolean;
@@ -45,14 +46,17 @@ export function DayDetailSheet({
 }: DayDetailSheetProps) {
   const [selectedSymptoms, setSelectedSymptoms] = useState<Symptom[]>([]);
   const [selectedFlow, setSelectedFlow] = useState<FlowIntensity | undefined>();
+  const [temperature, setTemperature] = useState<string>('');
   
   useEffect(() => {
     if (status?.dayLog) {
       setSelectedSymptoms(status.dayLog.symptoms);
       setSelectedFlow(status.dayLog.flowIntensity);
+      setTemperature(status.dayLog.temperature?.toString() || '');
     } else {
       setSelectedSymptoms([]);
       setSelectedFlow(undefined);
+      setTemperature('');
     }
   }, [status]);
   
@@ -67,10 +71,13 @@ export function DayDetailSheet({
   const handleSave = () => {
     if (!date) return;
     
+    const tempValue = temperature ? parseFloat(temperature) : undefined;
+    
     const log: DayLog = {
       date: format(date, 'yyyy-MM-dd'),
       symptoms: selectedSymptoms,
       flowIntensity: selectedFlow,
+      temperature: tempValue && tempValue >= 95 && tempValue <= 105 ? tempValue : undefined,
     };
     
     updateDayLog(log);
@@ -111,6 +118,30 @@ export function DayDetailSheet({
           </SheetDescription>
         </SheetHeader>
         
+        {/* Temperature */}
+        <div className="space-y-3 mb-6">
+          <h4 className="font-medium text-foreground flex items-center gap-2">
+            <Thermometer className="w-4 h-4 text-primary" />
+            Basal Body Temperature
+          </h4>
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              step="0.1"
+              min="95"
+              max="105"
+              placeholder="97.5"
+              value={temperature}
+              onChange={(e) => setTemperature(e.target.value)}
+              className="w-24 rounded-xl"
+            />
+            <span className="text-muted-foreground">°F</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Take your temperature first thing in the morning before getting out of bed
+          </p>
+        </div>
+
         {/* Flow Intensity */}
         <div className="space-y-3 mb-6">
           <h4 className="font-medium text-foreground flex items-center gap-2">
