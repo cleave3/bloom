@@ -5,18 +5,20 @@ import { useCycleCalculations } from '@/hooks/useCycleCalculations';
 import { CycleData, SYMPTOM_LABELS, Symptom } from '@/types/cycle';
 import { BottomNav } from '@/components/BottomNav';
 import { StatusCard } from '@/components/StatusCard';
+import { BBTChart } from '@/components/BBTChart';
 import { 
   Activity, 
   TrendingUp, 
   Calendar, 
   Clock,
   BarChart3,
-  Droplets
+  Droplets,
+  Thermometer
 } from 'lucide-react';
 
 export default function History() {
   const [cycleData, setCycleData] = useState<CycleData | null>(null);
-  const { stats } = useCycleCalculations(cycleData);
+  const { stats, predictedCycleLength } = useCycleCalculations(cycleData);
   
   useEffect(() => {
     setCycleData(getCycleData());
@@ -103,8 +105,38 @@ export default function History() {
             />
           </div>
         )}
+
+        {/* Predicted Cycle Length */}
+        {cycleData.periodLogs.length >= 2 && predictedCycleLength !== cycleData.cycleLength && (
+          <div className="bg-card rounded-2xl border border-border p-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+              <TrendingUp className="w-4 h-4" />
+              AI-Predicted Cycle Length
+            </div>
+            <p className="text-xl font-semibold text-foreground">
+              {predictedCycleLength} days
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Based on your logged cycles (weighted toward recent data)
+            </p>
+          </div>
+        )}
       </div>
       
+      {/* BBT Chart */}
+      {cycleData.dayLogs.some(log => log.temperature) && (
+        <div className="px-6 mt-8">
+          <h2 className="text-lg font-serif font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Thermometer className="w-5 h-5 text-primary" />
+            Temperature Tracking
+          </h2>
+          <BBTChart dayLogs={cycleData.dayLogs} cycleLength={cycleData.cycleLength} />
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            A rise of 0.2-0.5°F after ovulation indicates ovulation has occurred
+          </p>
+        </div>
+      )}
+
       {/* Top Symptoms */}
       {topSymptoms.length > 0 && (
         <div className="px-6 mt-8">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useTheme } from 'next-themes';
 import { getCycleData, saveCycleData, resetAllData, addPeriodLog, getNotificationSettings, saveNotificationSettings } from '@/lib/storage';
+import { downloadCSV, downloadPDF } from '@/lib/export';
 import { CycleData, FlowIntensity, FLOW_LABELS } from '@/types/cycle';
 import { BottomNav } from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
@@ -40,7 +41,10 @@ import {
   Sun,
   Bell,
   BellOff,
-  Smartphone
+  Smartphone,
+  Download,
+  FileText,
+  FileSpreadsheet
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -155,6 +159,18 @@ export default function Settings() {
       fertileReminder: enabled,
       lastNotificationDate: null,
     });
+  };
+
+  const handleExportCSV = () => {
+    if (!cycleData) return;
+    downloadCSV(cycleData);
+    toast.success('CSV file downloaded!');
+  };
+
+  const handleExportPDF = () => {
+    if (!cycleData) return;
+    downloadPDF(cycleData);
+    toast.success('PDF report opened for printing');
   };
   
   const FLOW_OPTIONS: FlowIntensity[] = ['spotting', 'light', 'medium', 'heavy'];
@@ -407,7 +423,48 @@ export default function Settings() {
         {/* Divider */}
         <div className="h-px bg-border my-6" />
         
-        {/* Reset Data */}
+        {/* Data Export Section */}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-muted-foreground px-1">Data Export</p>
+          
+          <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-xl bg-primary/10">
+                <Download className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">Export Your Data</p>
+                <p className="text-sm text-muted-foreground">
+                  Share your cycle history with healthcare providers
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleExportCSV}
+                className="flex-1 rounded-xl"
+                disabled={!cycleData}
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                CSV
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleExportPDF}
+                className="flex-1 rounded-xl"
+                disabled={!cycleData}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                PDF Report
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-border my-6" />
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button className="w-full bg-card rounded-2xl border border-destructive/20 p-4 flex items-center justify-between hover:bg-destructive/5 transition-all">

@@ -24,6 +24,7 @@ export interface DayLog {
   date: string; // ISO date string
   symptoms: Symptom[];
   flowIntensity?: FlowIntensity;
+  temperature?: number; // BBT in Fahrenheit
   notes?: string;
 }
 
