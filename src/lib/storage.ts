@@ -1,10 +1,26 @@
 import { UserSettings, CycleData, DayLog } from '@/types/cycle';
 
 const STORAGE_KEY = 'cycle-tracker-data';
+const NOTIFICATION_KEY = 'cycle-tracker-notifications';
+const THEME_KEY = 'cycle-tracker-theme';
+
+export interface NotificationSettings {
+  enabled: boolean;
+  periodReminder: boolean;
+  fertileReminder: boolean;
+  lastNotificationDate: string | null;
+}
 
 const defaultSettings: UserSettings = {
   onboardingComplete: false,
   cycleData: null,
+};
+
+const defaultNotificationSettings: NotificationSettings = {
+  enabled: false,
+  periodReminder: true,
+  fertileReminder: true,
+  lastNotificationDate: null,
 };
 
 export function getSettings(): UserSettings {
@@ -92,4 +108,36 @@ export function importData(data: string): boolean {
   } catch {
     return false;
   }
+}
+
+// Notification settings
+export function getNotificationSettings(): NotificationSettings {
+  try {
+    const stored = localStorage.getItem(NOTIFICATION_KEY);
+    if (!stored) return defaultNotificationSettings;
+    return JSON.parse(stored) as NotificationSettings;
+  } catch {
+    return defaultNotificationSettings;
+  }
+}
+
+export function saveNotificationSettings(settings: NotificationSettings): void {
+  localStorage.setItem(NOTIFICATION_KEY, JSON.stringify(settings));
+}
+
+// Theme settings
+export function getTheme(): 'light' | 'dark' | 'system' {
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+      return stored;
+    }
+    return 'system';
+  } catch {
+    return 'system';
+  }
+}
+
+export function saveTheme(theme: 'light' | 'dark' | 'system'): void {
+  localStorage.setItem(THEME_KEY, theme);
 }
