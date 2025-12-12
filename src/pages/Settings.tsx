@@ -6,6 +6,9 @@ import { getCycleData, saveCycleData, resetAllData, addPeriodLog, getNotificatio
 import { downloadCSV, downloadPDF } from '@/lib/export';
 import { CycleData, FlowIntensity, FLOW_LABELS } from '@/types/cycle';
 import { BottomNav } from '@/components/BottomNav';
+import { CloudSyncSection } from '@/components/CloudSyncSection';
+import { PartnerShareSection } from '@/components/PartnerShareSection';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
@@ -36,7 +39,6 @@ import {
   Ruler, 
   Trash2,
   ChevronRight,
-  Heart,
   Moon,
   Sun,
   Bell,
@@ -44,7 +46,9 @@ import {
   Smartphone,
   Download,
   FileText,
-  FileSpreadsheet
+  FileSpreadsheet,
+  LogOut,
+  LogIn
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -52,6 +56,7 @@ import { toast } from 'sonner';
 export default function Settings() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
   const [cycleData, setCycleData] = useState<CycleData | null>(null);
   const [cycleLength, setCycleLength] = useState(28);
   const [periodLength, setPeriodLength] = useState(5);
@@ -107,6 +112,11 @@ export default function Settings() {
   const handleResetData = () => {
     resetAllData();
     navigate('/onboarding');
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success('Signed out');
   };
   
   const handleToggleNotifications = async (enabled: boolean) => {
@@ -311,6 +321,16 @@ export default function Settings() {
         
         {/* Divider */}
         <div className="h-px bg-border my-6" />
+
+        {/* Cloud & Sharing Section */}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-muted-foreground px-1">Cloud & Sharing</p>
+          <CloudSyncSection />
+          <PartnerShareSection />
+        </div>
+        
+        {/* Divider */}
+        <div className="h-px bg-border my-6" />
         
         {/* Appearance Section */}
         <div className="space-y-3">
@@ -465,6 +485,50 @@ export default function Settings() {
 
         {/* Divider */}
         <div className="h-px bg-border my-6" />
+
+        {/* Account Section */}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-muted-foreground px-1">Account</p>
+          
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              className="w-full bg-card rounded-2xl border border-border p-4 flex items-center justify-between hover:shadow-soft transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-muted">
+                  <LogOut className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-foreground">Sign Out</p>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/auth')}
+              className="w-full bg-card rounded-2xl border border-border p-4 flex items-center justify-between hover:shadow-soft transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-primary/10">
+                  <LogIn className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-foreground">Sign In</p>
+                  <p className="text-sm text-muted-foreground">Enable cloud backup & sharing</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </button>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-border my-6" />
+
+        {/* Danger Zone */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button className="w-full bg-card rounded-2xl border border-destructive/20 p-4 flex items-center justify-between hover:bg-destructive/5 transition-all">
@@ -477,37 +541,27 @@ export default function Settings() {
                   <p className="text-sm text-muted-foreground">Delete all your cycle data</p>
                 </div>
               </div>
+              <ChevronRight className="w-5 h-5 text-destructive/50" />
             </button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-3xl">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogTitle className="font-serif">Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will permanently delete all your cycle data, including logged periods, symptoms, and settings. This action cannot be undone.
+                This will permanently delete all your cycle data from this device. This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
               <AlertDialogAction 
                 onClick={handleResetData}
-                className="bg-destructive text-destructive-foreground rounded-xl"
+                className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Delete Everything
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
-      
-      {/* App Info */}
-      <div className="px-6 mt-12 text-center">
-        <div className="flex items-center justify-center gap-2 text-muted-foreground">
-          <Heart className="w-4 h-4 text-primary" />
-          <span className="text-sm">Bloom v1.0</span>
-        </div>
-        <p className="text-xs text-muted-foreground mt-2">
-          Made with care for your well-being
-        </p>
       </div>
       
       <BottomNav />

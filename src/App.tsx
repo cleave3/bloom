@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import CalendarPage from "./pages/CalendarPage";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
+import Auth from "./pages/Auth";
+import SharedView from "./pages/SharedView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +41,8 @@ function AppRoutes() {
         element={onboarded ? <Dashboard /> : <Navigate to="/onboarding" replace />} 
       />
       <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/shared/:shareCode" element={<SharedView />} />
       <Route 
         path="/calendar" 
         element={onboarded ? <CalendarPage /> : <Navigate to="/onboarding" replace />} 
