@@ -1,5 +1,7 @@
 export type FlowIntensity = 'light' | 'medium' | 'heavy' | 'spotting';
 
+export type Mood = 'great' | 'good' | 'okay' | 'bad' | 'awful';
+
 export type Symptom = 
   | 'cramps'
   | 'headache'
@@ -25,6 +27,7 @@ export interface DayLog {
   symptoms: Symptom[];
   flowIntensity?: FlowIntensity;
   temperature?: number; // BBT in Fahrenheit
+  mood?: Mood;
   notes?: string;
 }
 
@@ -93,4 +96,20 @@ export const FLOW_LABELS: Record<FlowIntensity, string> = {
   light: 'Light',
   medium: 'Medium',
   heavy: 'Heavy',
+};
+
+export const MOOD_EMOJIS: Record<Mood, string> = {
+  great: '😄',
+  good: '🙂',
+  okay: '😐',
+  bad: '😔',
+  awful: '😢',
+};
+
+export const MOOD_LABELS: Record<Mood, string> = {
+  great: 'Great',
+  good: 'Good',
+  okay: 'Okay',
+  bad: 'Bad',
+  awful: 'Awful',
 };

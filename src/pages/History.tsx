@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { getCycleData } from '@/lib/storage';
 import { useCycleCalculations } from '@/hooks/useCycleCalculations';
-import { CycleData, SYMPTOM_LABELS, Symptom } from '@/types/cycle';
+import { CycleData, SYMPTOM_LABELS, Symptom, MOOD_EMOJIS, Mood } from '@/types/cycle';
 import { BottomNav } from '@/components/BottomNav';
 import { StatusCard } from '@/components/StatusCard';
 import { BBTChart } from '@/components/BBTChart';
+import { MoodChart } from '@/components/MoodChart';
 import { 
   Activity, 
   TrendingUp, 
@@ -13,7 +14,8 @@ import {
   Clock,
   BarChart3,
   Droplets,
-  Thermometer
+  Thermometer,
+  Smile
 } from 'lucide-react';
 
 export default function History() {
@@ -35,6 +37,16 @@ export default function History() {
   const topSymptoms = Object.entries(symptomCounts)
     .sort(([, a], [, b]) => (b as number) - (a as number))
     .slice(0, 5) as [Symptom, number][];
+
+  // Calculate mood distribution
+  const moodCounts = cycleData?.dayLogs.reduce((acc, log) => {
+    if (log.mood) {
+      acc[log.mood] = (acc[log.mood] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<Mood, number>) || {};
+
+  const hasMoodData = Object.keys(moodCounts).length > 0;
   
   if (!cycleData) {
     return (
@@ -122,6 +134,35 @@ export default function History() {
           </div>
         )}
       </div>
+
+      {/* Mood Chart */}
+      {hasMoodData && (
+        <div className="px-6 mt-8">
+          <h2 className="text-lg font-serif font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Smile className="w-5 h-5 text-primary" />
+            Mood Patterns
+          </h2>
+          <MoodChart dayLogs={cycleData.dayLogs} />
+          
+          {/* Mood Distribution */}
+          <div className="mt-4 bg-card rounded-2xl border border-border p-4">
+            <p className="text-sm text-muted-foreground mb-3">Mood Distribution</p>
+            <div className="flex justify-between">
+              {(['great', 'good', 'okay', 'bad', 'awful'] as Mood[]).map((mood) => {
+                const count = moodCounts[mood] || 0;
+                const total = Object.values(moodCounts).reduce((a, b) => a + b, 0);
+                const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                return (
+                  <div key={mood} className="flex flex-col items-center">
+                    <span className="text-2xl">{MOOD_EMOJIS[mood]}</span>
+                    <span className="text-xs text-muted-foreground mt-1">{percentage}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* BBT Chart */}
       {cycleData.dayLogs.some(log => log.temperature) && (
@@ -146,7 +187,8 @@ export default function History() {
           </h2>
           <div className="bg-card rounded-2xl border border-border overflow-hidden">
           {topSymptoms.map(([symptom, count], index) => {
-              const maxCount = Math.max(...Object.values(symptomCounts) as number[]);
+              const maxCount = Math.max(...(Object.values(symptomCounts) as number[]));
+              const numCount = count as number;
               return (
                 <div 
                   key={symptom}
@@ -161,11 +203,11 @@ export default function History() {
                     <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-primary rounded-full transition-all duration-500"
-                        style={{ width: `${(count / maxCount) * 100}%` }}
+                        style={{ width: `${maxCount > 0 ? (numCount / maxCount) * 100 : 0}%` }}
                       />
                     </div>
                     <span className="text-sm text-muted-foreground w-8 text-right">
-                      {count}
+                      {numCount}
                     </span>
                   </div>
                 </div>

@@ -14,7 +14,153 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cycle_data: {
+        Row: {
+          created_at: string
+          cycle_length: number
+          data: Json
+          id: string
+          last_period_start: string
+          period_length: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          cycle_length?: number
+          data?: Json
+          id?: string
+          last_period_start: string
+          period_length?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          cycle_length?: number
+          data?: Json
+          id?: string
+          last_period_start?: string
+          period_length?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      day_logs: {
+        Row: {
+          created_at: string
+          date: string
+          flow_intensity: string | null
+          id: string
+          mood: Database["public"]["Enums"]["mood_type"] | null
+          notes: string | null
+          symptoms: string[] | null
+          temperature: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          flow_intensity?: string | null
+          id?: string
+          mood?: Database["public"]["Enums"]["mood_type"] | null
+          notes?: string | null
+          symptoms?: string[] | null
+          temperature?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          flow_intensity?: string | null
+          id?: string
+          mood?: Database["public"]["Enums"]["mood_type"] | null
+          notes?: string | null
+          symptoms?: string[] | null
+          temperature?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      partner_shares: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          owner_id: string
+          partner_email: string | null
+          share_code: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          owner_id: string
+          partner_email?: string | null
+          share_code: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          owner_id?: string
+          partner_email?: string | null
+          share_code?: string
+        }
+        Relationships: []
+      }
+      period_logs: {
+        Row: {
+          created_at: string
+          flow_intensity: string | null
+          id: string
+          start_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          flow_intensity?: string | null
+          id?: string
+          start_date: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          flow_intensity?: string | null
+          id?: string
+          start_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          share_code: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          share_code?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          share_code?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +169,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      mood_type: "great" | "good" | "okay" | "bad" | "awful"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +296,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      mood_type: ["great", "good", "okay", "bad", "awful"],
+    },
   },
 } as const

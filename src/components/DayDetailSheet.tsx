@@ -14,13 +14,15 @@ import {
   DayStatus, 
   Symptom, 
   FlowIntensity, 
+  Mood,
   SYMPTOM_LABELS, 
   FLOW_LABELS,
   DayLog
 } from '@/types/cycle';
+import { MoodSelector } from '@/components/MoodSelector';
 import { updateDayLog } from '@/lib/storage';
 import { cn } from '@/lib/utils';
-import { Droplets, Check, Thermometer } from 'lucide-react';
+import { Droplets, Check, Thermometer, Smile } from 'lucide-react';
 
 interface DayDetailSheetProps {
   open: boolean;
@@ -46,16 +48,19 @@ export function DayDetailSheet({
 }: DayDetailSheetProps) {
   const [selectedSymptoms, setSelectedSymptoms] = useState<Symptom[]>([]);
   const [selectedFlow, setSelectedFlow] = useState<FlowIntensity | undefined>();
+  const [selectedMood, setSelectedMood] = useState<Mood | undefined>();
   const [temperature, setTemperature] = useState<string>('');
   
   useEffect(() => {
     if (status?.dayLog) {
       setSelectedSymptoms(status.dayLog.symptoms);
       setSelectedFlow(status.dayLog.flowIntensity);
+      setSelectedMood(status.dayLog.mood);
       setTemperature(status.dayLog.temperature?.toString() || '');
     } else {
       setSelectedSymptoms([]);
       setSelectedFlow(undefined);
+      setSelectedMood(undefined);
       setTemperature('');
     }
   }, [status]);
@@ -77,6 +82,7 @@ export function DayDetailSheet({
       date: format(date, 'yyyy-MM-dd'),
       symptoms: selectedSymptoms,
       flowIntensity: selectedFlow,
+      mood: selectedMood,
       temperature: tempValue && tempValue >= 95 && tempValue <= 105 ? tempValue : undefined,
     };
     
@@ -118,6 +124,15 @@ export function DayDetailSheet({
           </SheetDescription>
         </SheetHeader>
         
+        {/* Mood */}
+        <div className="space-y-3 mb-6">
+          <h4 className="font-medium text-foreground flex items-center gap-2">
+            <Smile className="w-4 h-4 text-primary" />
+            How are you feeling?
+          </h4>
+          <MoodSelector selectedMood={selectedMood} onSelect={setSelectedMood} />
+        </div>
+
         {/* Temperature */}
         <div className="space-y-3 mb-6">
           <h4 className="font-medium text-foreground flex items-center gap-2">
