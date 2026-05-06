@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "next-themes";
 import { isOnboardingComplete } from "@/lib/storage";
@@ -19,10 +19,10 @@ const queryClient = new QueryClient();
 
 function AppRoutes() {
   const [loading, setLoading] = useState(true);
-  const [onboarded, setOnboarded] = useState(false);
+  const location = useLocation();
+  const onboarded = isOnboardingComplete();
 
   useEffect(() => {
-    setOnboarded(isOnboardingComplete());
     setLoading(false);
   }, []);
 
@@ -40,7 +40,10 @@ function AppRoutes() {
         path="/" 
         element={onboarded ? <Dashboard /> : <Navigate to="/onboarding" replace />} 
       />
-      <Route path="/onboarding" element={<Onboarding />} />
+      <Route 
+        path="/onboarding" 
+        element={onboarded ? <Navigate to="/" replace /> : <Onboarding />} 
+      />
       <Route path="/auth" element={<Auth />} />
       <Route path="/shared/:shareCode" element={<SharedView />} />
       <Route 

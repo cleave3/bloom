@@ -1,73 +1,103 @@
-# Welcome to your Lovable project
+# Bloom - Your Personal Cycle Companion 🌸
 
-## Project info
+Bloom is a sophisticated, privacy-focused menstrual cycle tracker designed to provide clear insights into your health. Whether you're tracking your period, monitoring fertility windows, or simply staying informed about your body's patterns, Bloom offers a premium, intuitive experience.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+### 📅 Smart Dashboard
+*   **Cycle Overview**: Instantly see where you are in your cycle with a beautiful circular visualization.
+*   **Predictions**: Get accurate predictions for your next period and fertile window.
+*   **Daily Insights**: View personalized health tips based on your current cycle phase.
 
-**Use Lovable**
+### 🗓 Interactive Calendar
+*   **Visual History**: A comprehensive calendar view of past and predicted periods.
+*   **Fertility Tracking**: Highlights ovulation days and high-fertility windows.
+*   **Quick Logging**: Tap any day to log symptoms, mood, or period flow.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 📊 History & Analytics
+*   **Detailed Logs**: Review your cycle history at a glance.
+*   **Trend Analysis**: Understand your average cycle and period lengths over time.
 
-Changes made via Lovable will be committed automatically to this repo.
+### ⚙️ Personalized Settings
+*   **Custom Notifications**: Set reminders for upcoming periods or fertility windows.
+*   **Theme Customization**: Support for Light, Dark, and System modes with a refined aesthetic.
+*   **Data Portability**: Export or import your tracking data as JSON.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠 Technology Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Bloom is built with modern, high-performance web technologies:
 
-Follow these steps:
+*   **Frontend**: [React 18](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/) for robust, type-safe development.
+*   **Build Tool**: [Vite](https://vitejs.dev/) for lightning-fast development and optimized production builds.
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) for a sleek, responsive design with custom animations.
+*   **UI Components**: [shadcn/ui](https://ui.shadcn.com/) built on [Radix UI](https://www.radix-ui.com/) primitives for accessibility and premium feel.
+*   **State Management**: React Hooks and Local Storage for privacy-first, client-side data persistence.
+*   **Backend Integration**: [Supabase](https://supabase.com/) for potential cloud sync and authentication features.
+*   **Icons**: [Lucide React](https://lucide.dev/) for clean, consistent iconography.
+*   **Date Handling**: [date-fns](https://date-fns.org/) for precise cycle calculations.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🚀 Getting Started
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Prerequisites
+*   Node.js (v18 or higher)
+*   Yarn (preferred package manager)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Installation
 
-**Edit a file directly in GitHub**
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repo-url>
+    cd cycle-sense
+    ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+2.  **Install dependencies:**
+    ```bash
+    yarn install
+    ```
 
-**Use GitHub Codespaces**
+3.  **Configure environment variables:**
+    Create a `.env` file in the root directory and add your Supabase credentials (if applicable):
+    ```env
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+4.  **Run the development server:**
+    ```bash
+    yarn dev
+    ```
+    The application will be available at `http://localhost:8080`.
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 📖 Usage Guide
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 1. Onboarding
+The first time you open Bloom, you'll be guided through a quick setup:
+*   **Last Period**: Select the first day of your most recent period.
+*   **Cycle Length**: Set your average cycle length (usually 28 days).
+*   **Period Length**: Set how many days your period typically lasts.
 
-## How can I deploy this project?
+### 2. Daily Tracking
+Tap the **"+"** button or any day on the **Calendar** to log:
+*   **Flow Intensity**: Light, Medium, Heavy, or Spotting.
+*   **Symptoms**: Log how you're feeling to identify patterns.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### 3. Data Privacy
+Bloom prioritizes your privacy. By default, all tracking data is stored **locally on your device**. You can reset, export, or import your data at any time from the **Settings** page.
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## 🧪 Development & Testing
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+*   **Linting**: `yarn lint`
+*   **Formatting**: Uses Prettier through ESLint.
+*   **Production Build**: `yarn build`
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
